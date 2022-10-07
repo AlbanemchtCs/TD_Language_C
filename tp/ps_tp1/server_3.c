@@ -34,7 +34,7 @@ void stop_handler(int sig){
 
 void exit_message(){
     // function adding an exit message 
-     printf("Ending the program.... Goodbye, see you soon, take care ! :) \n" );
+     printf("Ending the program) \n" );
 }
 
 /* QUESTIONS
@@ -44,20 +44,6 @@ La commande CTRL+C tue les deux processus.
 
 int main()
 {
-    pid_t pid_fork = fork();
-
-    if (pid_fork == -1) {
-        perror("fork");
-        exit(EXIT_FAILURE);}
-    if(pid_fork == 0){
-        printf("Child process \n");
-    }
-    else{
-        printf("Father process \n");
-        int child_status;
-        printf("Child terminated with status %d\n", child_status);
-    }
-
     // structure for sigaction 
     struct sigaction str; 
     str.sa_handler = &stop_handler; 
@@ -67,7 +53,23 @@ int main()
     // adding SIGTERM signal 
     sigaction(SIGTERM, &str, NULL);
     
+
     printf("Starting program \n");
+
+
+    pid_t pid_fork = fork();
+
+    if (pid_fork == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);}
+    if(pid_fork == 0){
+        printf("Child process: %d\n", getpid());
+    }
+    else{
+        printf("Father process %d\n", getpid());
+        int child_status;
+        printf("Child terminated with status %d\n", child_status);
+    }
 
     while(running){
         int pid = getpid();

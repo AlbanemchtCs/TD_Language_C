@@ -32,7 +32,7 @@ void stop_handler(int sig){
 
 void exit_message(){
     // function adding an exit message 
-     printf("Ending the program) \n" );
+     printf("Ending the program \n" );
 }
 
 /* QUESTIONS

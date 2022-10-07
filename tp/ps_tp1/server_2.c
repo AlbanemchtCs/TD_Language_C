@@ -27,7 +27,7 @@ bool running = TRUE;
 void stop_handler(int sig){
     // function stop handler 
     printf("\n Number signal received: %d \n ", sig);
-    running = FALSE; 
+    // running = FALSE; 
 }
 
 /* QUESTIONS
@@ -38,6 +38,9 @@ void stop_handler(int sig){
 4. Avec kill -s KILL <PID> le message de l'handler n'est pas affiché. Avec <FATHERPID> le terminal est fermé. 
 Avec un signal SIGKILL par définition de ce type de signal il n'est pas possible de l'intercepter:
 "signum specifies the signal and can be any valid signal except SIGKILL and SIGSTOP."
+
+5. Lorsque l'on retire la variable running, les commandes CTLR + C et kill <PID> sont reçus (message affiché) mais n'arrêtent pas le processus en cours. 
+Avec la commande kill -9 <PID>, le programme s'arrête bien. 
 */
 
 int main()

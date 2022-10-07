@@ -13,21 +13,24 @@
 #include <time.h>
 // For getpid(), getppid()
 #include <unistd.h>
+// Define True and False
+#define TRUE 1
+#define FALSE 0
 
 int main()
 {
     printf("Starting program \n");
 
-    while (true){
-          int pid(getpid());
-          int fatherpid(getppid());
-          int random_nub(rand() % 100);
+    while(TRUE){
+        int pid = getpid();
+        int fatherpid = getppid();
+        int random_nub = rand() % 100;
 
-          printf("pid: %d \n" , (pid));
-          printf("father pid: %d \n" , (fatherpid));
-          printf("randint: %d \n" , (random_nub));
+        printf("pid: %d \n" , pid);
+        printf("father pid: %d \n" , fatherpid);
+        printf("randint: %d \n" , random_nub);
 
-          sleep(1);
+        sleep(1);
     }
         
     return EXIT_SUCCESS;

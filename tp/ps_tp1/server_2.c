@@ -26,7 +26,7 @@ bool running = TRUE;
 
 void stop_handler(int sig){
     // function stop handler 
-    printf("\n Number signal received: %d \n ", sig);
+    printf("\n Number signal received: %d \n", sig);
     running = FALSE; 
 }
 

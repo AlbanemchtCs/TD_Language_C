@@ -19,6 +19,8 @@
 #include <signal.h>
 // For duplication
 #include <unistd.h>
+// For wait
+#include <sys/wait.h>
 
 // Define True and False
 #define TRUE 1
@@ -38,8 +40,12 @@ void exit_message(){
 }
 
 /* QUESTIONS
-1. On peut distinguer les deux types de messages en fonction du <pid> et <fatherpid>. 
+2.1.1. On peut distinguer les deux types de messages en fonction du <pid> et <fatherpid>. 
 La commande CTRL+C tue les deux processus.
+
+2.1.2. En arrêtant le processus avec kill <pid>:
+* - En commençant par le kill du fils: le processus fils est toujours listé avec "ps a", il disparait après le kill du père 
+* - En commençant par le kill du père: le processus fils continue d'exister, puis le processus fils disparait en le tuant
 */
 
 int main()
@@ -68,6 +74,7 @@ int main()
     else{
         printf("Father process %d\n", getpid());
         int child_status;
+        wait(&child_status);
         printf("Child terminated with status %d\n", child_status);
     }
 

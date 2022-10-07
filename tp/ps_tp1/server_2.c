@@ -27,7 +27,12 @@ bool running = TRUE;
 void stop_handler(int sig){
     // function stop handler 
     printf("\n Number signal received: %d \n ", sig);
-    // running = FALSE; 
+    running = FALSE; 
+}
+
+void exit_message(){
+    // function adding an exit message 
+     printf("Ending the program.... Goodbye, see you soon, take care ! :) \n" );
 }
 
 /* QUESTIONS
@@ -41,6 +46,9 @@ Avec un signal SIGKILL par définition de ce type de signal il n'est pas possibl
 
 5. Lorsque l'on retire la variable running, les commandes CTLR + C et kill <PID> sont reçus (message affiché) mais n'arrêtent pas le processus en cours. 
 Avec la commande kill -9 <PID>, le programme s'arrête bien. 
+
+6. La fonction exit_message() est bien activée quand le programme est arrêté avec un CTRL+C et un kill. 
+Néanmoins, avec la commande kill -9, le message de sortie n'est pas affiché.
 */
 
 int main()
@@ -65,6 +73,5 @@ int main()
 
         sleep(1);
     }
-    printf("Ending program \n");
     return EXIT_SUCCESS;
 }

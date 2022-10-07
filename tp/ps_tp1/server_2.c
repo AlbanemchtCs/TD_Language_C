@@ -34,11 +34,11 @@ void stop_handler(int sig){
 1. Le message de stop_handler() s'affiche lorsque l'on utiliser CTRL-C.
 2. le message de stop handler() a été affiché en utilisant la commande kill avec l'option -s INT <PID>. 
 3. Avec la commande kill <PID>, sans l'option- -s, le message de l'handler ne s'affiche pas. Il faut pour cela rajouter la sigaction avec SIGTERM
+
+4. Avec kill -s KILL <PID> le message de l'handler n'est pas affiché. Avec <FATHERPID> le terminal est fermé. 
+Avec un signal SIGKILL par définition de ce type de signal il n'est pas possible de l'intercepter:
+"signum specifies the signal and can be any valid signal except SIGKILL and SIGSTOP."
 */
-
-
-
-
 
 int main()
 {
@@ -47,8 +47,7 @@ int main()
     str.sa_handler = &stop_handler; 
     sigemptyset(&str.sa_mask);
     str.sa_flags = 0; 
-    sigaction(SIGTERM, &str, NULL);
-    
+    sigaction(SIGINT, &str, NULL);
     
     printf("Starting program \n");
 

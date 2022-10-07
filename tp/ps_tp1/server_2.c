@@ -38,7 +38,7 @@ void exit_message(){
 /* QUESTIONS
 1. Le message de stop_handler() s'affiche lorsque l'on utiliser CTRL-C.
 2. le message de stop handler() a été affiché en utilisant la commande kill avec l'option -s INT <PID>. 
-3. Avec la commande kill <PID>, sans l'option- -s, le message de l'handler ne s'affiche pas. Il faut pour cela rajouter la sigaction avec SIGTERM
+3. Avec la commande kill <PID>, sans l'option -s, le message de l'handler ne s'affiche pas. Il faut pour cela rajouter la sigaction avec SIGTERM
 
 4. Avec kill -s KILL <PID> le message de l'handler n'est pas affiché. Avec <FATHERPID> le terminal est fermé. 
 Avec un signal SIGKILL par définition de ce type de signal il n'est pas possible de l'intercepter:
@@ -59,6 +59,8 @@ int main()
     sigemptyset(&str.sa_mask);
     str.sa_flags = 0; 
     sigaction(SIGINT, &str, NULL);
+    // adding SIGTERM signal 
+    sigaction(SIGTERM, &str, NULL);
     
     printf("Starting program \n");
 

@@ -28,13 +28,13 @@ bool running = TRUE;
 
 void stop_handler(int sig){
     // function stop handler 
-    printf("\n Number signal received: %d \n", sig);
+    printf("\nNumber signal received: %d \n", sig);
     running = FALSE; 
 }
 
 void exit_message(){
     // function adding an exit message 
-     printf("Ending the program) \n" );
+     printf("Ending the program \n");
 }
 
 /* QUESTIONS
@@ -53,9 +53,9 @@ int main()
     // adding SIGTERM signal 
     sigaction(SIGTERM, &str, NULL);
     
+    atexit(exit_message);
 
     printf("Starting program \n");
-
 
     pid_t pid_fork = fork();
 

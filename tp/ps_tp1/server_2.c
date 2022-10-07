@@ -26,7 +26,7 @@ bool running = TRUE;
 
 void stop_handler(int sig){
     // function stop handler 
-    printf("\n Number signal received: %d \n", sig);
+    printf("\nNumber signal received: %d \n", sig);
     running = FALSE; 
 }
 
@@ -62,6 +62,8 @@ int main()
     // adding SIGTERM signal 
     sigaction(SIGTERM, &str, NULL);
     
+    atexit(exit_message);
+
     printf("Starting program \n");
 
     while(running){

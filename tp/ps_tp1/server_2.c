@@ -30,6 +30,16 @@ void stop_handler(int sig){
     running = FALSE; 
 }
 
+/* QUESTIONS
+1. Le message de stop_handler() s'affiche lorsque l'on utiliser CTRL-C.
+2. le message de stop handler() a été affiché en utilisant la commande kill avec l'option -s INT <PID>. 
+3. Avec la commande kill <PID>, sans l'option- -s, le message de l'handler ne s'affiche pas. Il faut pour cela rajouter la sigaction avec SIGTERM
+*/
+
+
+
+
+
 int main()
 {
     // structure for sigaction 
@@ -37,8 +47,8 @@ int main()
     str.sa_handler = &stop_handler; 
     sigemptyset(&str.sa_mask);
     str.sa_flags = 0; 
-    sigaction(SIGINT, &str, NULL);
-
+    sigaction(SIGTERM, &str, NULL);
+    
     
     printf("Starting program \n");
 
@@ -53,8 +63,6 @@ int main()
 
         sleep(1);
     }
-
     printf("Ending program \n");
-
     return EXIT_SUCCESS;
 }

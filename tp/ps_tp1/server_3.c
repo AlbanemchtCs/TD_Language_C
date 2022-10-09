@@ -5,6 +5,20 @@
  * server_3.c
  */
 
+/* QUESTIONS
+2.1.1. On peut distinguer les deux types de messages en fonction du <pid> et <fatherpid>. 
+La commande CTRL+C tue les deux processus.
+
+2.1.2. En arrêtant le processus avec kill <pid>:
+* - En commençant par le kill du fils: le processus fils est toujours listé avec "ps a", il disparait après le kill du père 
+* - En commençant par le kill du père: le processus fils continue d'exister, puis le processus fils disparait en le tuant
+
+2.1.3. En utilisant la fonction wait(), permettant au père d'attendre la mort du fils pour s'executer:
+* - Lorsque le fils s'arrête avec la commande CTRL-C, le status finit avec 0
+* - Lorsque le fils s'arrête avec la commande kill <PID>, le status finit avec 0
+* - Lorsque le fils s'arrête avec la commande kill -9, le status de fin est un 9 
+*/
+
 // for printf()
 #include <stdio.h>
 // For rand(), srand(), sleep(), EXIT_SUCCESS
@@ -39,15 +53,6 @@ void exit_message(){
      printf("Ending the program \n");
 }
 
-/* QUESTIONS
-2.1.1. On peut distinguer les deux types de messages en fonction du <pid> et <fatherpid>. 
-La commande CTRL+C tue les deux processus.
-
-2.1.2. En arrêtant le processus avec kill <pid>:
-* - En commençant par le kill du fils: le processus fils est toujours listé avec "ps a", il disparait après le kill du père 
-* - En commençant par le kill du père: le processus fils continue d'exister, puis le processus fils disparait en le tuant
-*/
-
 int main()
 {
     // structure for sigaction 
@@ -60,6 +65,7 @@ int main()
     sigaction(SIGTERM, &str, NULL);
     
     atexit(exit_message);
+
 
     printf("Starting program \n");
 

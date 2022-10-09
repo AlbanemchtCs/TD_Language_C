@@ -5,6 +5,11 @@
  * server_4.c
  */
 
+/* QUESTIONS
+2.2.1. L'arrêt est bien correct avec CTRL-C, ainsi qu'avec un kill sur le fils puis sur le père ou l'inverse.
+*/
+
+
 // for printf()
 #include <stdio.h>
 // For rand(), srand(), sleep(), EXIT_SUCCESS
@@ -37,7 +42,7 @@ void stop_handler(int sig){
 
 void exit_message(){
     // function adding an exit message 
-     printf("Ending the program \n");
+     printf("\nEnding the program \n");
 }
 
 int main()
@@ -71,16 +76,19 @@ int main()
     }
     else if(pid_fork == 0){
         printf("Child process: %d\n", getpid());
+        close(pipefd[1]);
 
         while (running && read(pipefd[0], &buf, sizeof(int)) > 0){
             //Lecture du nombre aléatoire puis affichage du message
             printf("\nLe nombre aléatoire récupéré par le fils: %d", buf);
         }  
+        close(pipefd[0]);
         
     }
     else{
         printf("Father process %d\n", getpid());
-        
+        close(pipefd[0]);
+
         while(running){
             int pid = getpid();
             int fatherpid = getppid();
@@ -90,7 +98,7 @@ int main()
             }
             sleep(1);
         }
-
+        close(pipefd[1]);
         int child_status;
         wait(&child_status);
         printf("Child terminated with status %d\n", child_status);

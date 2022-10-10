@@ -7,6 +7,10 @@
 
 /* QUESTIONS
 2.2.1. L'arrêt est bien correct avec CTRL-C, ainsi qu'avec un kill sur le fils puis sur le père ou l'inverse.
+
+2.2.2. Lorsque l'on arrête le fils en premier, le message de fin n'est pas affiché. 
+En revanche lorsque l'on arrête le père en premier, le message de fin est affiché.
+Pour que le message du père s'affiche, il faut rajouter "SIGPIPE" avec sigaction.
 */
 
 // for printf()
@@ -55,6 +59,7 @@ int main(){
         return EXIT_FAILURE;
     }
     sigaction(SIGTERM, &str, NULL);
+    sigaction(SIGPIPE, &str, NULL);
 
     // wait for child process
     int child_status;

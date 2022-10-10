@@ -79,6 +79,40 @@ void test_13(){
     std::cout << std::endl;
 }
 
+// Function less()
+bool less(int a, int b){
+    return (a <= b);
+}
+
+// Function greater()
+bool greater(int a, int b){
+    return (a >= b);
+}
+
+// Function sort_tab_2()
+void sort_tab_2(std::vector<int> &tab, bool(*comp)(int,int)){
+   std::sort(tab.begin(),tab.end(), comp);
+}
+
+// Functiont test_14()
+void test_14(){
+    std::cout << "*** test_14 ***" << std::endl;
+    std::vector<int> tab(10);
+    random_tab(tab);
+    print_tab(tab);
+    std::cout << " >> SORTED LIST with -- >> ";
+    sort_tab_2(tab, less);
+    print_tab(tab);
+    std::cout << std::endl;
+
+    random_tab(tab);
+    print_tab(tab);
+    std::cout << " >> SORTED LIST with ++ >> ";
+    sort_tab_2(tab, greater);
+    print_tab(tab);
+    std::cout << std::endl;
+}
+
 int main(){
     std::srand( std::time( nullptr ));
 
@@ -86,6 +120,7 @@ int main(){
     test_11();
     test_12();
     test_13();
+    test_14();
 
     return 0;
 }

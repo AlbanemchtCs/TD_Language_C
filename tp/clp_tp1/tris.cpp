@@ -34,11 +34,31 @@ void test_11(){
     std::cout << std::endl;
 }
 
+//Function random
+void random_tab(std::vector<int> &tab){
+    for (int i{0}; i < tab.size(); i++) {
+        tab[i] = (rand()%21)-10;
+    }
+}
+
+//Function test_12()
+void test_12() {
+    std::cout << "*** test_12 ***" << std::endl;
+    std::vector<int>tab(10);
+    random_tab(tab);
+    print_tab(tab);
+    std::cout << std::endl;
+}
+
+
+
+
 int main(){
     std::srand( std::time( nullptr ));
 
-    //Call function test_11()
+    //Call functions tests
     test_11();
+    test_12();
 
     return 0;
 }

@@ -50,8 +50,34 @@ void test_12() {
     std::cout << std::endl;
 }
 
+// Function sort_tab_1()
+void sort_tab_1(std::vector<int> &tab){
+    for (int i{0}; i < tab.size() - 1; i++) {
+        int min_index{i};
+        int min_value{tab[i]};
+        for (int j{i+1}; j < tab.size(); j++) {
+            if (tab[j] < min_value) {
+                min_value = tab[j];
+                min_index = j;
+            }
+        }
+        if (min_index != i) {
+            std::swap(tab[i], tab[min_index]);
+            }
+    }
+}
 
-
+// Function test_13()
+void test_13(){
+    std::cout << "*** test_13 ***" << std::endl;
+    std::vector<int> tab(10);
+    random_tab(tab);
+    print_tab(tab);
+    std::cout << " >> SORTED LIST >> ";
+    sort_tab_1(tab);
+    print_tab(tab);
+    std::cout << std::endl;
+}
 
 int main(){
     std::srand( std::time( nullptr ));
@@ -59,6 +85,7 @@ int main(){
     //Call functions tests
     test_11();
     test_12();
+    test_13();
 
     return 0;
 }

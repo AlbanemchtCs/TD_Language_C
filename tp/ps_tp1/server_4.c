@@ -9,7 +9,6 @@
 2.2.1. L'arrêt est bien correct avec CTRL-C, ainsi qu'avec un kill sur le fils puis sur le père ou l'inverse.
 */
 
-
 // for printf()
 #include <stdio.h>
 // For rand(), srand(), sleep(), EXIT_SUCCESS
@@ -27,7 +26,6 @@
 // For wait
 #include <sys/wait.h>
 
-
 // Define True and False
 #define TRUE 1
 #define FALSE 0
@@ -36,72 +34,68 @@ bool running = TRUE;
 
 void stop_handler(int sig){
     // function stop handler 
-    printf("\nNumber signal received: %d \n", sig);
+    printf("\n\nNumber signal received: %d\n", sig);
     running = FALSE; 
 }
 
 void exit_message(){
     // function adding an exit message 
-     printf("\nEnding the program \n");
+     printf("Ending the program\n");
 }
 
-int main()
-{
-    int pipefd[2];
-    int buf;
-    if (pipe(pipefd) == -1)
-    {
-        exit(EXIT_FAILURE);
-    }
+int main(){
+    printf("Starting program \n");
+    atexit(exit_message);
 
     // structure for sigaction 
     struct sigaction str; 
     str.sa_handler = &stop_handler; 
-    sigemptyset(&str.sa_mask);
-    str.sa_flags = 0; 
-    sigaction(SIGINT, &str, NULL);
-    // adding SIGTERM signal 
+    if  (sigaction(SIGINT, &str, NULL) < 0){
+        perror("Unable to register SIGINT");
+        return EXIT_FAILURE;
+    }
     sigaction(SIGTERM, &str, NULL);
+
+    // wait for child process
+    int child_status;
+    wait(&child_status);
+
+    // create a pipe
+    int pipefd[2];
+    pipe(pipefd);
     
-    atexit(exit_message);
+    int buf;
 
-
-    printf("Starting program \n");
-
+    // fork function
     pid_t pid_fork = fork();
 
-    if (pid_fork == -1){
-        perror("fork");
-        exit(EXIT_FAILURE);
-    }
-    else if(pid_fork == 0){
-        printf("Child process: %d\n", getpid());
-        close(pipefd[1]);
-
-        while (running && read(pipefd[0], &buf, sizeof(int)) > 0){
-            //Lecture du nombre aléatoire puis affichage du message
-            printf("\nLe nombre aléatoire récupéré par le fils: %d", buf);
-        }  
-        close(pipefd[0]);
+    while(running){
+        if (pid_fork == 0){
+            close(pipefd[1]);
         
-    }
-    else{
-        printf("Father process %d\n", getpid());
-        close(pipefd[0]);
-
-        while(running){
-            int pid = getpid();
-            int fatherpid = getppid();
-            int random_nub = rand() % 100;
-            if (!write(pipefd[1], &random_nub, sizeof(int))){
-                return EXIT_FAILURE;
+            if (read(pipefd[0], &buf, sizeof(buf)) > 0){
+                int pid = getpid();
+                int fatherpid = getppid();
+                printf("\nChild process : %d\n", pid);
+                printf("Parent process : %d\n", fatherpid);
+                printf("Le nombre aléatoire récupéré par le fils: %d\n", buf);
+            } else{
+                break;
             }
+        } else{
+            close(pipefd[0]);
+            int random_nub = rand() % 100;
+            write(pipefd[1], &random_nub, sizeof(buf));
             sleep(1);
+            }
         }
+        close(pipefd[0]); 
         close(pipefd[1]);
-        int child_status;
-        wait(&child_status);
-        printf("Child terminated with status %d\n", child_status);
+
+        if (WIFEXITED(child_status)){
+        printf("Child exited with status of %d\n", WEXITSTATUS(child_status));
+        } else if (WIFSIGNALED(child_status)){
+        printf("Child terminated by signal %d\n", WTERMSIG(child_status));
+        }
+        return EXIT_SUCCESS;
     }
-    return EXIT_SUCCESS;
-}

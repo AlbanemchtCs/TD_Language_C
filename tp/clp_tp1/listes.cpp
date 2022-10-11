@@ -24,7 +24,7 @@ std::forward_list<int> random_list(int nb){
     return list;
 }
 
-// Function print_list
+// Function print_list()
 void print_list(std::forward_list<int> &list)
 {
     std::cout << "( ";
@@ -63,6 +63,40 @@ void test_22(){
     std::cout << std::endl;
 }
 
+// Function filter_iter()
+std::forward_list<int> filter_iter(const std::forward_list<int> &list, std::function<bool(int)> predicat){
+    //the integers will appear in the reverse order
+    std::forward_list<int> results;
+    for (int i : list)
+    {
+        if (predicat(i))
+        {
+            results.push_front(i);
+        }
+    }
+    return results;
+}
+
+// Function test_23()
+void test_23()
+{
+    std::cout << "*** test_23 ***" << std::endl;
+    auto list = random_list(10);
+    print_list(list);
+
+    std::cout << "--------------v---------------" << std::endl;
+    std::forward_list<int> results = map_iter(list, [](int a)
+                                              { return a * 3; });
+    print_list(results);
+
+    std::cout << "--------------v---------------" << std::endl;
+    std::forward_list<int> filtered = filter_iter(results, [](int a)
+                                                  { return (a % 2 == 0); });
+    print_list(filtered);
+
+    std::cout << std::endl;
+}
+
 // Function main()
 int main()
 {
@@ -71,6 +105,7 @@ int main()
     //tests
     test_21();
     test_22();
+    test_23();
 
     return 0;
 }

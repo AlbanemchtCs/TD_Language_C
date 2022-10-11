@@ -117,6 +117,42 @@ void test_24(){
     std::cout << std::endl;
 }
 
+// Function reduce()
+int reduce(const std::forward_list<int> &list, int n, std::function<int(int, int)> fct){
+    //the integers will appear in the reverse order
+    int result{n};
+    for (int i : list)
+    {
+        result = fct(result, i);
+    }
+    return result;
+}
+
+// Function test_25()
+void test_25(){
+    std::cout << "*** test_25 ***" << std::endl;
+    auto list = random_list(10);
+    print_list(list);
+
+    int max_int = std::numeric_limits<int>::max();
+    int min_int = std::numeric_limits<int>::min();
+
+    int min_value{reduce(list, max_int, [](int a, int b){
+                             if (a <= b)
+                                 return a;
+                             return b;
+                         })};
+    std::cout << "Minimum: " << min_value << std::endl;
+
+    int max_value{reduce(list, min_int, [](int a, int b){
+                             if (a >= b)
+                                 return a;
+                             return b;
+                         })};
+    std::cout << "Maximum: " << max_value << std::endl;
+    std::cout << std::endl;
+}
+
 // Function main()
 int main()
 {
@@ -127,6 +163,7 @@ int main()
     test_22();
     test_23();
     test_24();
+    test_25();
 
     return 0;
 }

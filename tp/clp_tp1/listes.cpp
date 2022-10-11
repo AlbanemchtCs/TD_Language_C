@@ -274,6 +274,33 @@ void test_32(){
     std::cout << std::endl;
 }
 
+/*
+ * Bonus part 4
+ */
+
+// Function test_41()
+void test_41(){
+    std::cout << "*** test_41 ***" << std::endl;
+    int coef{std::rand() % 5 + 1};
+    auto list = random_list(10);
+    print_list(list);
+
+    std::multiplies<int> mul_int;
+
+    std::cout << "-----------Using: " << coef << "-----------" << std::endl;
+    std::cout << "--------------v---------------" << std::endl;
+    std::forward_list<int> results = map(list, [coef, mul_int](int a)
+                                         { return mul_int(a, coef); });
+    print_list(results);
+
+    std::cout << "--------------v---------------" << std::endl;
+    std::forward_list<int> filtered = filter(results, [](int a)
+                                             { return (a % 2 == 0); });
+    print_list(filtered);
+
+    std::cout << std::endl;
+}
+
 // Function main()
 int main()
 {
@@ -287,6 +314,7 @@ int main()
     test_25();
     test_31();
     test_32();
+    test_41();
     return 0;
 }
 

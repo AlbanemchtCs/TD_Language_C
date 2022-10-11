@@ -34,11 +34,32 @@ void print_list(std::forward_list<int> &list)
 }
 
 // Function test_21()
-void test_21()
-{
+void test_21(){
     std::cout << "*** test_21 ***" << std::endl;
     auto list = random_list(10);
     print_list(list);
+    std::cout << std::endl;
+}
+
+// Function map_iter()
+std::forward_list<int> map_iter(const std::forward_list<int> &list, std::function<int(int)> fct){
+    //the integers will appear in the reverse order
+    std::forward_list<int> results;
+    for (int i : list)
+        results.push_front(fct(i));
+    return results;
+}
+
+// Function test_22()
+void test_22(){
+    std::cout << "*** test_22 ***" << std::endl;
+    auto list = random_list(10);
+    print_list(list);
+
+    std::cout << "--------------v---------------" << std::endl;
+    std::forward_list<int> results = map_iter(list, [](int a)
+                                              { return a * 3; });
+    print_list(results);
     std::cout << std::endl;
 }
 
@@ -49,6 +70,7 @@ int main()
 
     //tests
     test_21();
+    test_22();
 
     return 0;
 }

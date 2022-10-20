@@ -19,8 +19,7 @@
 #define FALSE 0
 
 
-int main()
-{
+int main(){
     printf("Beginning \n");
 
     while(TRUE){

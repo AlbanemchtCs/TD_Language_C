@@ -45,21 +45,18 @@
 bool running = TRUE;
 
 void stop_handler(int sig){
-    // function stop handler 
     printf("\n\nReceived signal %d\n", sig);
     running = false;
 }
 
 void exit_message(){
-    // function adding an exit message 
-     printf("Ending the program\n");
+     printf("Ending\n");
 }
 
 int main(){
-    printf("Starting program \n");
+    printf("Beginning \n");
     atexit(exit_message);
 
-    // structure for sigaction 
     struct sigaction str; 
     str.sa_handler = &stop_handler; 
     if  (sigaction(SIGINT, &str, NULL) < 0){
@@ -69,7 +66,6 @@ int main(){
     sigaction(SIGTERM, &str, NULL);
     sigaction(SIGPIPE, &str, NULL);
 
-    // wait for child process
     int child_status;
     wait(&child_status);
 
@@ -102,7 +98,7 @@ int main(){
     }
 
     // Listen
-    if ((listen(socket_desc, 3)) != 0) {
+    if ((listen(socket_desc, 3)) != 0){
         perror("\nListen failed\n");
         return EXIT_FAILURE;
     } else {
@@ -112,16 +108,16 @@ int main(){
 
     // Accept the data packet from client
     client_sock = accept(socket_desc, (SA*)&client, &len);
-    if (client_sock < 0) {
+    if (client_sock < 0){
         perror("\nAccept failed \n");
         return EXIT_FAILURE;
-    } else {
+    } else{
         printf("\nConnection accepted\n");
     }
 
     while (running){
-        int random_nub = rand() % 100;
-        write(client_sock, &random_nub, sizeof(random_nub));  
+        int random_number = rand() % 100;
+        write(client_sock, &random_number, sizeof(random_number));  
         sleep(1);
     }
 

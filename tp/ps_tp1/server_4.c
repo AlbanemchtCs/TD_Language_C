@@ -5,14 +5,6 @@
  * server_4.c
  */
 
-/* QUESTIONS
-2.2.1. L'arrêt est bien correct avec CTRL-C, ainsi qu'avec un kill sur le fils puis sur le père ou l'inverse.
-
-2.2.2. Lorsque l'on arrête le fils en premier, le message de fin n'est pas affiché. 
-En revanche lorsque l'on arrête le père en premier, le message de fin est affiché.
-Pour que le message du père s'affiche, il faut rajouter "SIGPIPE" avec sigaction.
-*/
-
 // for printf()
 #include <stdio.h>
 // For rand(), srand(), sleep(), EXIT_SUCCESS
@@ -34,24 +26,29 @@ Pour que le message du père s'affiche, il faut rajouter "SIGPIPE" avec sigactio
 #define TRUE 1
 #define FALSE 0
 
+/* QUESTIONS
+2.2.1. L'arrêt est bien correct avec la commande CTRL-C, ainsi qu'avec la commande kill sur le fils puis sur le père et inversement.
+
+2.2.2. Lorsque l'on arrête le fils en premier, le message de fin n'est pas affiché. 
+En revanche lorsque l'on arrête le père en premier, le message de fin est affiché.
+Pour que le message du père s'affiche, il faut rajouter "SIGPIPE" avec sigaction.
+*/
+
 bool running = TRUE;
 
 void stop_handler(int sig){
-    // function stop handler 
     printf("\n\nNumber signal received: %d\n", sig);
     running = FALSE; 
 }
 
 void exit_message(){
-    // function adding an exit message 
-     printf("Ending the program\n");
+     printf("Ending\n");
 }
 
 int main(){
-    printf("Starting program \n");
+    printf("Beginning \n");
     atexit(exit_message);
 
-    // structure for sigaction 
     struct sigaction str; 
     str.sa_handler = &stop_handler; 
     if  (sigaction(SIGINT, &str, NULL) < 0){
@@ -71,7 +68,7 @@ int main(){
     
     int buf;
 
-    // fork function
+    // fork()
     pid_t pid_fork = fork();
 
     while(running){
@@ -83,14 +80,14 @@ int main(){
                 int fatherpid = getppid();
                 printf("\nChild process : %d\n", pid);
                 printf("Parent process : %d\n", fatherpid);
-                printf("Le nombre aléatoire récupéré par le fils: %d\n", buf);
+                printf("Random number retrieved by the child: %d\n", buf);
             } else{
                 break;
             }
         } else{
             close(pipefd[0]);
-            int random_nub = rand() % 100;
-            write(pipefd[1], &random_nub, sizeof(buf));
+            int random_number = rand() % 100;
+            write(pipefd[1], &random_number, sizeof(buf));
             sleep(1);
             }
         }

@@ -34,21 +34,18 @@
 bool running = TRUE;
 
 void stop_handler(int sig){
-    // function stop handler 
     printf("\n\nReceived signal %d\n", sig);
     running = false;
 }
 
 void exit_message(){
-    // function adding an exit message 
-     printf("Ending the program\n");
+     printf("Ending\n");
 }
 
 int main() {
-    printf("Starting program \n");
+    printf("Beginning \n");
     atexit(exit_message);
 
-    // structure for sigaction 
     struct sigaction str; 
     str.sa_handler = &stop_handler; 
     if  (sigaction(SIGINT, &str, NULL) < 0){
@@ -58,7 +55,6 @@ int main() {
     sigaction(SIGTERM, &str, NULL);
     sigaction(SIGPIPE, &str, NULL);
 
-    // wait for child process
     int child_status;
     wait(&child_status);
 
@@ -68,9 +64,9 @@ int main() {
     //  open FIFO for write only
     int fd = open(fifo, O_WRONLY);
 
-    while (running) {
-        int random_nub = rand() % 100;
-        write(fd, &random_nub, sizeof(random_nub));
+    while (running){
+        int random_number = rand() % 100;
+        write(fd, &random_number, sizeof(random_number));
         sleep(1);
     }
 

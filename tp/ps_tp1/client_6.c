@@ -45,21 +45,18 @@
 bool running = TRUE;
 
 void stop_handler(int sig){
-    // function stop handler 
     printf("\n\nReceived signal %d\n", sig);
     running = false;
 }
 
 void exit_message(){
-    // function adding an exit message 
-     printf("Ending the program\n");
+     printf("Ending\n");
 }
 
 int main(){
-    printf("Starting program \n");
+    printf("Beginning \n");
     atexit(exit_message);
 
-    // structure for sigaction 
     struct sigaction str; 
     str.sa_handler = &stop_handler; 
     if  (sigaction(SIGINT, &str, NULL) < 0){
@@ -69,11 +66,10 @@ int main(){
     sigaction(SIGTERM, &str, NULL);
     sigaction(SIGPIPE, &str, NULL);
 
-    // wait for child process
     int child_status;
     wait(&child_status);
 
-    int socket_desc, client_sock, random_nub;
+    int socket_desc, client_sock, random_number;
     struct sockaddr_in server, client;
 
     // Create socket function
@@ -93,18 +89,18 @@ int main(){
     server.sin_port = htons(PORT);
 
     // Connect to remote server
-    if (connect(socket_desc, (SA*)&server, sizeof(server))) {
+    if (connect(socket_desc, (SA*)&server, sizeof(server))){
         perror("\nConnect failed. Error\n");
         return EXIT_FAILURE;
-    } else {
+    } else{
         printf(" - Connected\n");
     }
 
-    while (running) {
+    while (running){
         // Read data from server
-        if (read(socket_desc, &random_nub, sizeof(random_nub)) > 0) {
-            printf("Le nombre aléatoire récupéré par le serveur: : %d\n", random_nub);
-        } else {
+        if (read(socket_desc, &random_number, sizeof(random_number)) > 0) {
+            printf("Random number retrieved by the server: : %d\n", random_number);
+        } else{
             break;  
         }
     }

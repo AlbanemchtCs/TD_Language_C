@@ -34,21 +34,18 @@
 bool running = TRUE;
 
 void stop_handler(int sig){
-    // function stop handler 
     printf("\n\nReceived signal %d\n", sig);
     running = false;
 }
 
 void exit_message(){
-    // function adding an exit message 
-     printf("Ending the program\n");
+     printf("Ending\n");
 }
 
-int main() {
-    printf("Starting program\n");
+int main(){
+    printf("Beginning\n");
     atexit(exit_message);
 
-    // structure for sigaction 
     struct sigaction str; 
     str.sa_handler = &stop_handler; 
     if  (sigaction(SIGINT, &str, NULL) < 0){
@@ -58,22 +55,21 @@ int main() {
     sigaction(SIGTERM, &str, NULL);
     sigaction(SIGPIPE, &str, NULL);
 
-    // wait for child process
     int child_status;
     wait(&child_status);
 
     char *fifo = "/tmp/ps_tp1_fifo";
     mkfifo(fifo, 0666);
 
-    int random_nub;
+    int random_number;
 
     // open FIFO for read only
     int fd = open(fifo, O_RDONLY);  
 
-    while (running) {
-        if (read(fd, &random_nub, sizeof(random_nub)) > 0) {
-            printf("Le nombre aléatoire récupéré par le serveur: %d\n", random_nub);
-        } else {
+    while (running){
+        if (read(fd, &random_number, sizeof(random_number)) > 0){
+            printf("Random number retrieved by the server: %d\n", random_number);
+        } else{
             break;
         }
     }

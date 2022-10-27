@@ -91,12 +91,12 @@ void test_23(){
 // Function test_24()
 void test_24(){
     std::cout << "*** test_24 ***" << std::endl;
-    int coef{std::rand() % 5 + 1};
+    int multiple{std::rand() % 5 + 1};
     auto list = random_list(10);
     print_list(list);
 
-    std::cout << "---------------- x" << coef << " ----------------" << std::endl;
-    std::forward_list<int> list_map = map_iter(list, [coef](int a) {return a * coef;});
+    std::cout << "---------------- x" << multiple << " ----------------" << std::endl;
+    std::forward_list<int> list_map = map_iter(list, [multiple](int a) {return a * multiple;});
     print_list(list_map);
 
     std::cout << "----------- Even numbers -----------" << std::endl;
@@ -144,21 +144,20 @@ void test_25(){
  */
 
 // Function fold_left_aux()
-int fold_left_aux(std::forward_list<int>::const_iterator it,
-                  std::forward_list<int>::const_iterator end, int n,
-                  std::function<int(int, int)> fct){
-    if (it == end)
+int fold_left_aux(std::forward_list<int>::const_iterator iterator,
+                  std::forward_list<int>::const_iterator end_iterator, int n,
+                  std::function<int(int, int)> fonction){
+    if (iterator == end_iterator)
         return n;
-    else
-    {
-        int result{fct(*it, n)};
-        return fold_left_aux(++it, end, result, fct);
+    else{
+        int outcome{fonction(*iterator, n)};
+        return fold_left_aux(++iterator, end_iterator, outcome, fonction);
     }
 }
 
 // Function fold_left()
-int fold_left(const std::forward_list<int> &list, int n, std::function<int(int, int)> fct){
-    return fold_left_aux(list.cbegin(), list.cend(), n, fct);
+int fold_left(const std::forward_list<int> &list, int n, std::function<int(int, int)> fonction){
+    return fold_left_aux(list.cbegin(), list.cend(), n, fonction);
 }
 
 // Function test_31()
@@ -167,94 +166,87 @@ void test_31(){
     auto list = random_list(10);
     print_list(list);
 
-    int max_int = std::numeric_limits<int>::max();
-    int min_int = std::numeric_limits<int>::min();
+    int maximum_int = std::numeric_limits<int>::max();
+    int minimum_int = std::numeric_limits<int>::min();
 
-    int min_value{fold_left(list, max_int,
-                            [](int a, int b)
-                            {
-                                if (a <= b)
-                                    return a;
-                                return b;
-                            })};
-    std::cout << "Minimum: " << min_value << std::endl;
+    int minimum_value{fold_left(list, maximum_int,[](int a, int b){
+        if (a <= b)
+            return a;
+        return b;
+    })};
+    std::cout << "Smallest element: " << minimum_value << std::endl;
 
-    int max_value{fold_left(list, min_int, [](int a, int b){
-                                if (a >= b)
-                                    return a;
-                                return b;
-                            })};
-    std::cout << "Maximum: " << max_value << std::endl;
+    int maximum_value{fold_left(list, minimum_int, [](int a, int b){
+        if (a >= b)
+            return a;
+        return b;
+    })};
+    std::cout << "Largest element: " << maximum_value << std::endl;
     std::cout << std::endl;
 }
 
 // Function map_aux()
-std::forward_list<int> map_aux(std::forward_list<int>::const_iterator it,
-                               std::forward_list<int>::const_iterator end,
-                               std::function<int(int)> fct,
-                               std::forward_list<int> results){
-    if (it == end)
-        return results;
-    else
-    {
-        int result = fct(*it);
-        results = map_aux(++it, end, fct, results);
-        results.push_front(result);
-        return results;
+std::forward_list<int> map_aux(std::forward_list<int>::const_iterator iterator,
+                               std::forward_list<int>::const_iterator end_iterator,
+                               std::function<int(int)> fonction,
+                               std::forward_list<int> list_mapped){
+    if (iterator == end_iterator)
+        return list_mapped;
+    else{
+        int value = fonction(*iterator);
+        list_mapped = map_aux(++iterator, end_iterator, fonction, list_mapped);
+        list_mapped.push_front(value);
+        return list_mapped;
     }
 }
 
 // Function map()
 std::forward_list<int> map(const std::forward_list<int> &list,
-                           std::function<int(int)> fct){
-    std::forward_list<int> results;
-    return map_aux(list.cbegin(), list.cend(), fct, results);
+                           std::function<int(int)> fonction){
+    std::forward_list<int> list_mapped;
+    return map_aux(list.cbegin(), list.cend(), fonction, list_mapped);
 }
 
 // Function filter_aux()
-std::forward_list<int> filter_aux(std::forward_list<int>::const_iterator it,
-                                  std::forward_list<int>::const_iterator end,
-                                  std::function<bool(int)> fct,
-                                  std::forward_list<int> results){
-    if (it == end)
-        return results;
+std::forward_list<int> filter_aux(std::forward_list<int>::const_iterator iterator,
+                                  std::forward_list<int>::const_iterator end_iterator,
+                                  std::function<bool(int)> fonction,
+                                  std::forward_list<int> list_filtered){
+    if (iterator == end_iterator)
+        return list_filtered;
     else{
-        if (fct(*it)){
-            int result = *it;
-            results = filter_aux(++it, end, fct, results);
-            results.push_front(result);
+        if (fonction(*iterator)){
+            int value = *iterator;
+            list_filtered = filter_aux(++iterator, end_iterator, fonction, list_filtered);
+            list_filtered.push_front(value);
         }
         else
-            return filter_aux(++it, end, fct, results);
-        return results;
+            return filter_aux(++iterator, end_iterator, fonction, list_filtered);
+        return list_filtered;
     }
 }
 
 // Function filter()
 std::forward_list<int> filter(const std::forward_list<int> &list,
-                              std::function<bool(int)> fct){
-    std::forward_list<int> results;
-    return filter_aux(list.cbegin(), list.cend(), fct, results);
+                              std::function<bool(int)> fonction){
+    std::forward_list<int> list_filtered;
+    return filter_aux(list.cbegin(), list.cend(), fonction, list_filtered);
 }
 
 // Function test_32()
 void test_32(){
     std::cout << "*** test_32 ***" << std::endl;
-    int coef{std::rand() % 5 + 1};
+    int multiple{std::rand() % 5 + 1};
     auto list = random_list(10);
     print_list(list);
 
-    std::cout << "-----------Using: " << coef << "-----------" << std::endl;
-    std::cout << "--------------v---------------" << std::endl;
-    std::forward_list<int> results = map(list, [coef](int a)
-                                         { return a * coef; });
+    std::cout << "---------------- x" << multiple << " ----------------" << std::endl;
+    std::forward_list<int> list_map = map(list, [multiple](int a){return a * multiple;});
     print_list(results);
 
-    std::cout << "--------------v---------------" << std::endl;
-    std::forward_list<int> filtered = filter(results, [](int a)
-                                             { return (a % 2 == 0); });
-    print_list(filtered);
-
+    std::cout << "----------- Even numbers -----------" << std::endl;
+    std::forward_list<int> list_filter = filter(list_map, [](int a){return (a % 2 == 0);});
+    print_list(list_filter);
     std::cout << std::endl;
 }
 

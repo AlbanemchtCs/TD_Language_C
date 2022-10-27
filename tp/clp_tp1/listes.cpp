@@ -242,7 +242,7 @@ void test_32(){
 
     std::cout << "---------------- x" << multiple << " ----------------" << std::endl;
     std::forward_list<int> list_map = map(list, [multiple](int a){return a * multiple;});
-    print_list(results);
+    print_list(list_map);
 
     std::cout << "----------- Even numbers -----------" << std::endl;
     std::forward_list<int> list_filter = filter(list_map, [](int a){return (a % 2 == 0);});
@@ -257,29 +257,25 @@ void test_32(){
 // Function test_41()
 void test_41(){
     std::cout << "*** test_41 ***" << std::endl;
-    int coef{std::rand() % 5 + 1};
+    int multiple{std::rand() % 5 + 1};
     auto list = random_list(10);
     print_list(list);
 
-    std::multiplies<int> mul_int;
+    std::multiplies<int> multiple_int;
 
-    std::cout << "-----------Using: " << coef << "-----------" << std::endl;
-    std::cout << "--------------v---------------" << std::endl;
-    std::forward_list<int> results = map(list, [coef, mul_int](int a)
-                                         { return mul_int(a, coef); });
-    print_list(results);
+    std::cout << "---------------- x" << multiple << " ----------------" << std::endl;
+    std::forward_list<int> list_map = map(list, [multiple, multiple_int](int a){return multiple_int(a, multiple);});
+    print_list(list_map);
 
-    std::cout << "--------------v---------------" << std::endl;
-    std::forward_list<int> filtered = filter(results, [](int a)
-                                             { return (a % 2 == 0); });
-    print_list(filtered);
-
+    std::cout << "----------- Even numbers -----------" << std::endl;
+    std::forward_list<int> list_filter = filter(list_map, [](int a){return (a % 2 == 0);});
+    print_list(list_filter);
     std::cout << std::endl;
 }
 
 // Function main()
 int main(){
-    std::srand( std::time( nullptr ));
+    std::srand(std::time(nullptr));
 
     //tests
     test_21();

@@ -14,8 +14,17 @@
 
 class Number{
 public:
+    // Constructor
     Number( unsigned long l ) { first_ = new Digit(l); }
+
+    // Destructor
     ~Number() { delete first_; }
+
+    // Constructor by copy
+    Number(const Number& n) { first_ = new Digit(*n.first_); }
+
+    // Affectation by copy
+    Number& operator=(const Number& n) { first_ = new Digit(*n.first_); return (*this); }
 
     void print( std::ostream & out ) const { first_->print( out ); }
 
@@ -28,10 +37,10 @@ private:
         Digit * next_;
 
         // Number constructor
-        Digit(unsigned long l) {
-            if (l >= number_base) {
+        Digit( unsigned long l ) {
+            if ( l >= number_base ) {
                 digit_ = l % number_base;
-                next_ = new Digit(l/number_base);
+                next_ = new Digit( l/number_base );
             } else {
                 digit_ = l;
                 next_ = nullptr;
@@ -40,14 +49,36 @@ private:
 
         // Number destructor
         ~Digit() {
-            if (next_ != nullptr) {
+            if ( next_ != nullptr ) {
                 delete next_;
             }
         }
 
-        void print(std::ostream & out ) {
-            if (next_ != nullptr) {
-                next_->print(out);
+        // Constructor by copy
+        Digit( const Digit & d ) {
+            digit_ = d.digit_;
+            if ( d.next_ != nullptr ) {
+                next_ = new Digit( *d.next_ );
+            } else {
+                next_ = nullptr;
+            }
+        }
+
+        // Affectation by copy
+        Digit& operator=( const Digit& d ) {
+            if ( d.next_ == nullptr ) {
+                digit_ = d.digit_;
+                next_ = nullptr;
+            } else {
+                digit_ = d.digit_;
+                next_ = new Digit( *d.next_ );
+            }
+            return (*this);
+        }
+
+        void print( std::ostream & out ) {
+            if ( next_ != nullptr ) {
+                next_->print( out );
             }
             out << digit_;
         }

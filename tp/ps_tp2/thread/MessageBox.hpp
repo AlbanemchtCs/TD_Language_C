@@ -24,9 +24,10 @@ public:
         // Ajout des instructions de synchronisation
         unique_lock lock(mutex_box_);
 
-        if (sum_msg == 1) {
+        while (sum_msg != 0) {
             box_not_complete.wait(lock);
         }
+        
         basic_put( message );
         sum_msg++;
         box_complete.notify_one();
@@ -36,9 +37,10 @@ public:
         // Ajout des instructions de synchronisation
         unique_lock lock(mutex_box_);
 
-        if (sum_msg == 0) {
+        while (sum_msg == 0) {
             box_complete.wait(lock);
         }
+
         int message{ basic_get() };
         sum_msg = 0;
         box_not_complete.notify_one();

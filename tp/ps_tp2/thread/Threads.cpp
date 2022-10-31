@@ -40,18 +40,33 @@ void one_producer_one_consumer() {
 }
 
 void several_producers_and_consumers() {
-    // TODO :
-    // - Créer un générateur de nombres aléatoires
-    // - Créer une boîte à lettres
-    // - Créer entre 10 et 20 consommateurs et 2 fois plus de producteurs 
-    // - Créer les threads correspondants
-    // - Attendre la fin des threads
- 
+    // Création générateur de nombres aléatoires
+    Random rdm_number(50);
+    
+    // Création  boîte à lettres
+    MessageBox msg_box;
+
+    // Création entre 10 et 20 consommateurs et 2 fois plus de producteurs 
+    Random rdm_number_bis(10);
+    int thread_sum = rdm_number_bis() + 10;
+    for (int i = 0; i < 2; i++) {
+        Consumer cons(i, msg_box, rdm_number, 20);
+        std::thread thread_cons(cons);
+        Producer prod(2 * i, msg_box, rdm_number, 10);
+        Producer prod_bis(2 * i + 1, msg_box, rdm_number, 10);
+
+        // Création des threads correspondants
+        std::thread thread_prod(prod);
+        std::thread thread_prod_bis(prod_bis);
+        thread_prod.join();
+        thread_prod_bis.join();
+        thread_cons.join();
+    }
 }
 
 int main() {
-    one_producer_one_consumer();
-    //several_producers_and_consumers();
+    // one_producer_one_consumer();
+    several_producers_and_consumers();
     return 0;
 }
 

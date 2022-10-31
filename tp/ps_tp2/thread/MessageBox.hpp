@@ -22,13 +22,11 @@ class MessageBox : public BasicMessageBox {
 public:
     void put( int message ) {
         // Ajout des instructions de synchronisation
+        basic_put(message);
         unique_lock lock(mutex_box_);
+        box_not_complete.wait(lock, [this]() { return sum_msg < box_size_; });
 
-        while (sum_msg != 0) {
-            box_not_complete.wait(lock);
-        }
-        
-        basic_put( message );
+        basic_put(message);
         sum_msg++;
 
         mutex_box_.unlock();
@@ -38,13 +36,10 @@ public:
     int get() {
         // Ajout des instructions de synchronisation
         unique_lock lock(mutex_box_);
-
-        while (sum_msg == 0) {
-            box_complete.wait(lock);
-        }
-
+        box_complete.wait(lock, [this]() { return sum_msg > 0; });
+   
         int message{ basic_get() };
-        sum_msg = 0;
+        sum_msg--;
 
         mutex_box_.unlock();
         box_not_complete.notify_one();

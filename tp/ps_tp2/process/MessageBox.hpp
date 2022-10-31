@@ -23,16 +23,42 @@
 class MessageBox : public BasicMessageBox {
 public:
     void put( int message ) {
-        // TODO : ajouter les mecanismes de synchronisation
+        // Ajout des mecanismes de synchronisation
         basic_put( message );
+        unique_lock lock(mutex_box_);
+
+        box_not_complete.wait(lock, [this]() { return sum_msg < box_size_; });
+
+        basic_put(message);
+        sum_msg++;
+
+        mutex_box_.unlock();
+        box_complete.notify_one();
     }
  
     int get() {
-        // TODO : ajouter les mecanismes de synchronisation
+        // Ajout des instructions de synchronisation
+        unique_lock lock(mutex_box_);
+
+        box_complete.wait(lock, [this]() { return sum_msg > 0; });
+
         int message{ basic_get() };
+        sum_msg--;
+
+        mutex_box_.unlock();
+        box_not_complete.notify_one();
+        
         return message;
     }
+
 private:
-    // TODO : ajouter les objets de synchronisation
+    // Ajout des objets de synchronisation
+    int sum_msg = 0;
+
+    typedef boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex>unique_lock;
+
+    boost::interprocess::interprocess_mutex mutex_box_;
+    boost::interprocess::interprocess_condition box_complete;
+    boost::interprocess::interprocess_condition box_not_complete;
 };
  

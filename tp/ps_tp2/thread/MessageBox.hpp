@@ -21,21 +21,39 @@
 class MessageBox : public BasicMessageBox {
 public:
     void put( int message ) {
-        // TODO :
-        // - Ajouter les instructions de synchronisation
-        // - Ne pas faire d'affichage dans cette méthode
+        // Ajout des instructions de synchronisation
+        unique_lock lock(mutex_box_);
+
+        if (sum_msg == 1) {
+            box_not_complete.wait(lock);
+        }
         basic_put( message );
+        sum_msg++;
+        box_complete.notify_one();
     }
- 
+
     int get() {
-        // TODO :
-        // - Ajouter les instructions de synchronisation
-        // - Ne pas faire d'affichage dans cette méthode
+        // Ajout des instructions de synchronisation
+        unique_lock lock(mutex_box_);
+
+        if (sum_msg == 0) {
+            box_complete.wait(lock);
+        }
         int message{ basic_get() };
+        sum_msg = 0;
+        box_not_complete.notify_one();
+
         return message;
     }
+
 private:
-    // TODO : 
-    // - Ajouter les objets de synchronisation
+    // Ajout des objets de synchronisation
+    int sum_msg = 0;
+
+    std::mutex mutex_box_;
+    typedef std::unique_lock<std::mutex> unique_lock;
+
+    std::condition_variable box_complete;
+    std::condition_variable box_not_complete;
 };
  

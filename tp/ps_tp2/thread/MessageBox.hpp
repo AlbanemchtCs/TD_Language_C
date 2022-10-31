@@ -30,6 +30,8 @@ public:
         
         basic_put( message );
         sum_msg++;
+
+        mutex_box_.unlock();
         box_complete.notify_one();
     }
 
@@ -43,6 +45,8 @@ public:
 
         int message{ basic_get() };
         sum_msg = 0;
+
+        mutex_box_.unlock();
         box_not_complete.notify_one();
 
         return message;

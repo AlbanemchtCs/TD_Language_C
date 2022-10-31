@@ -106,9 +106,9 @@ private:
 
         // Multiply
         void multiply( unsigned int i ) {
-            unsigned long n = digit_ * i;
-            DigitType result = n / number_base;
-            digit_ = n % number_base;
+            unsigned long l = digit_ * i;
+            DigitType result = l / number_base;
+            digit_ = l % number_base;
             if ( next_ != nullptr ) {
                 next_->multiply( i );
                 next_->add( result );

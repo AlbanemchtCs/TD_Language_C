@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <math.h>
 
 class Number{
 public:
@@ -26,7 +27,15 @@ public:
     // Affectation by copy
     Number& operator=(const Number& n) { first_ = new Digit(*n.first_); return (*this); }
 
+    // Print
     void print( std::ostream & out ) const { first_->print( out ); }
+
+    // Add
+    void add(unsigned int i) { first_->add(i); }
+
+    // Multiply
+    void multiply(unsigned int i) { first_->multiply(i); }
+
 
 private:
     using DigitType = unsigned int;
@@ -82,9 +91,43 @@ private:
             }
             out << digit_;
         }
+
+        // Add
+        void add( unsigned int i ) {
+            DigitType result = static_cast<unsigned long>( digit_ + i ) / number_base;
+            digit_ = static_cast<unsigned long>( digit_ + i ) % number_base;
+            if ( next_ != nullptr ) {
+                next_->add( result );
+            }
+            else if ( result != 0 ) {
+                next_ = new Digit( result );
+            }
+        }
+
+        // Multiply
+        void multiply( unsigned int i ) {
+            unsigned long n = digit_ * i;
+            DigitType result = n / number_base;
+            digit_ = n % number_base;
+            if ( next_ != nullptr ) {
+                next_->multiply( i );
+                next_->add( result );
+            }
+            else if ( result != 0 ) {
+                next_ = new Digit( result );
+            }
+        }
+
     };
     Digit * first_;
 };
+
+Number factorial(unsigned int i) {
+    if ( i <= 1 ) return Number{1};
+    Number n{i};
+    while (--i > 0) n.multiply(i);
+    return n;
+}
 
 inline std::ostream & operator<<( std::ostream & out, const Number & n ) {
     n.print( out );

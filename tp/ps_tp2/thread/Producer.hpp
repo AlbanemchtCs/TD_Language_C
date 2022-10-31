@@ -23,10 +23,15 @@ public:
     using ProdOrCons::ProdOrCons;
  
     void operator()() override {
-        // TODO : 
-        // - Déposer dans box_ nb_messages_ entiers positifs avec attente
-        //   aléatoire avant chaque dépôt.
-        // - Afficher des messages entre chaque étape pour suivre l'avancement.
+        using milliseconds = std::chrono::duration<int, std::milli>;
+        Random rdm_number(50);
+        for (int m = 0; m < nb_messages_; m++) {
+            // Dépose dans box_ nb_messages_ entiers positifs avec attente aléatoire avant chaque dépôt
+            std::this_thread::sleep_for(milliseconds{rdm_number()});
+            // Affiche des messages entre chaque étape pour suivre l'avancement
+            box_.put(m);
+            std::cout << "Producer message " << m << "\n";
+        }
     }
 };
- 
+

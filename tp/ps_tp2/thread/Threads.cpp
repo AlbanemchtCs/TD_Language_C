@@ -22,13 +22,21 @@
  * Test avec 1 producteur et 1 consommateur
  */
 void one_producer_one_consumer() {
-    // TODO :
-    // - Créer un générateur de nombres aléatoires
-    // - Créer une boîte à lettres
-    // - Créer un producteur et un consommateur
-    // - Créer les threads correspondants
-    // - Attendre la fin des threads
- 
+    // Générateur de nombres aléatoires
+    Random rdm_number(50);
+
+    // Boîte à lettres
+    MessageBox msg_box{};
+
+    // Création d'un producteur et un consommateur
+    Producer prod(1, msg_box, rdm_number, 20);
+    Consumer cons(1, msg_box, rdm_number, 20);
+
+    // Création des threads correspondants
+    std::thread thread_prod(prod);
+    std::thread thread_cons(cons);
+    thread_prod.join();
+    thread_cons.join();
 }
 
 void several_producers_and_consumers() {

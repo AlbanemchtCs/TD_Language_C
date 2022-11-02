@@ -8,7 +8,9 @@
 #ifndef NUMBER_HPP_INCLUDED
 #define NUMBER_HPP_INCLUDED
 
+#include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <string>
 #include <utility>
 #include <math.h>
@@ -26,6 +28,15 @@ public:
 
     // Affectation by copy
     Number& operator=(const Number& n) { first_ = new Digit(*n.first_); return (*this); }
+
+    // String
+    Number(std::string string) {
+        if (string == "") {
+            throw std::invalid_argument("String is empty");
+        }
+        std::reverse(string.begin(), string.end());
+        first_ = new Digit(string);
+    }
 
     // Print
     void print( std::ostream & out ) const { first_->print( out ); }
@@ -54,6 +65,26 @@ private:
                 digit_ = l;
                 next_ = nullptr;
             }
+        }
+
+        // String constructor
+        Digit(std::string string) {
+            digit_ = 0;
+            unsigned long l = 0;
+            unsigned long maximum = log10( number_base );
+            unsigned long number = std::min( maximum, static_cast <unsigned long> ( string.size()) );
+            for ( l = 0; l < number; l++ ) {
+                if ( !std::isdigit( string[l] ) ) {
+                    throw std::invalid_argument( "A string is not a number" );
+                }
+                DigitType d = static_cast <unsigned int> ( string[l] - '0' );
+                digit_ = pow( 10, l ) * d;
+            }
+            string.erase( 0, number );
+            if ( string.empty() ) 
+                next_ = nullptr;
+            else
+                next_ = new Digit( string );
         }
 
         // Number destructor
@@ -122,17 +153,12 @@ private:
     Digit * first_;
 };
 
-Number factorial(unsigned int i) {
-    if ( i <= 1 ) return Number{1};
-    Number n{i};
-    while (--i > 0) n.multiply(i);
-    return n;
-}
-
-inline std::ostream & operator<<( std::ostream & out, const Number & n ) {
+inline std::ostream & operator<< ( std::ostream & out, const Number & n ) {
     n.print( out );
     return out;
 }
 
-#endif
+Number factorial( unsigned int i );
+std::istream &operator>> ( std::istream &in, Number &n );
 
+#endif

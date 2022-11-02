@@ -15,12 +15,12 @@
 
 // Factorial
 Number factorial( unsigned int i ){
-    Number n { 1 };
+    Number number { 1 };
     while ( i > 0 ) {
-        n.multiply ( i );
+        number.multiply ( i );
         i -= 1;
     }
-    return n;
+    return number;
 };
 
 // Function for in
@@ -28,9 +28,10 @@ std::istream &operator>> ( std::istream &in, Number &n ) {
     std::string string { "" };
     in >> std::ws;
     while ( in.good () ) {
-        int c{ in.get () };
+        int c { in.get () };
         if ( std::isdigit ( c ) ) {
-            string += c;
+            unsigned int d { static_cast <unsigned int> (c - '0') };
+            string = string + std::to_string(d);
         }
         else {
             in.putback ( c );
@@ -40,5 +41,3 @@ std::istream &operator>> ( std::istream &in, Number &n ) {
     n = Number { string };
     return in;
 }
-
-

@@ -163,7 +163,63 @@ TEST( TestNumber, TestFactorial123 )
                          "72186029519906261646730733907419814952960000000000000000000000000000" );
 }
 
-int main( int argc, char * argv[] )
+// Tests string
+TEST( TestNumber, TestString0 )
+{
+    Number n{"0"};
+    std::ostringstream os;
+    os << n;
+    EXPECT_EQ(os.str(), "0");
+}
+
+TEST( TestNumber, TestString )
+{
+    Number n{ "7654" };
+    std::ostringstream os;
+    os << n;
+    EXPECT_EQ(os.str(), "7654");
+}
+
+TEST( TestNumber, TestStringBig )
+{
+    Number n{ "76543210987" };
+    std::ostringstream os;
+    os << n;
+    EXPECT_EQ(os.str(), "76543210987");
+}
+
+// Tests Stream Input
+TEST( TestNumber, TestStreamIn0 )
+{
+    Number n{0};
+    std::string inp("0ef");
+    std::istringstream(inp) >> n;
+    std::ostringstream os;
+    os << n;
+    EXPECT_EQ(os.str(), "0");
+}
+
+TEST( TestNumber, TestStreamIn )
+{
+    Number n{0};
+    std::string inp("7654ef");
+    std::istringstream(inp) >> n;
+    std::ostringstream os;
+    os << n;
+    EXPECT_EQ(os.str(), "7654");
+}
+
+TEST( TestNumber, TestStreamInBig )
+{
+    Number n{0};
+    std::string inp("76543210987efgh");
+    std::istringstream(inp) >> n;
+    std::ostringstream os;
+    os << n;
+    EXPECT_EQ(os.str(), "76543210987");
+}
+
+int main( int argc, char * argv[] ) 
 {
     ::testing::InitGoogleTest( &argc, argv );
     return RUN_ALL_TESTS();

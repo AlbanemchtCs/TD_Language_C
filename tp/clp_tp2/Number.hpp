@@ -10,7 +10,6 @@
 
 #include <algorithm>
 #include <iostream>
-#include <iterator>
 #include <string>
 #include <utility>
 #include <math.h>
@@ -158,7 +157,10 @@ inline std::ostream & operator<< ( std::ostream & out, const Number & n ) {
     return out;
 }
 
+// Factorial
 Number factorial( unsigned int i );
+
+// Stream Input
 std::istream &operator>> ( std::istream &in, Number &n );
 
 #endif

@@ -15,8 +15,30 @@
 
 class Expression {
 public:
-    // TODO
+    Expression() {}
+    virtual ~Expression() {}
+
 private:
+};
+
+
+class Nombre : public Expression {
+public:
+    Nombre(float value) : value_(value) {}
+    ~Nombre() {}
+
+private:
+    const float value_;
+};
+
+
+class Variable : public Expression {
+public:
+    Variable(std::string name) : name_(name) {}
+    ~Variable() {} 
+
+private:
+    const std::string name_;
 };
 
 #endif

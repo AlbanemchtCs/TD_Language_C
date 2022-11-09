@@ -13,6 +13,7 @@
 
 #include "Expression,.hpp"
 
+// Test Number
 TEST(TestExpression, TestNumber1) {
     Nombre nbr{1};
     std::ostringstream os;
@@ -27,6 +28,7 @@ TEST(TestExpression, TestNumber2) {
     EXPECT_EQ(os.str(), "2");
 }
 
+// Test Variable
 TEST(TestExpression, TestVariable1) {
     Variable var{"Var1"};
     std::ostringstream os;
@@ -41,6 +43,32 @@ TEST(TestExpression, TestVariable2) {
     EXPECT_EQ(os.str(), "Var2");
 }
 
+// Test Derivation
+TEST(TestExpression, TestDerive1) {
+    Expression* exp = new Nombre{1};
+    std::ostringstream os;
+    Expression* derive = exp->derive("Var_name1");
+    os << *derive;
+    EXPECT_EQ(os.str(), "0");
+}
+
+TEST(TestExpression, TestDerive2) {
+    Expression* exp = new Variable{"Var_name2"};
+    std::ostringstream os;
+    Expression* derive = exp->derive("Var_name2");
+    os << *derive;
+    EXPECT_EQ(os.str(), "1");
+}
+
+TEST(TestExpression, TestDerive3) {
+    Expression* exp = new Variable{"Var_name3"};
+    std::ostringstream os;
+    Expression* derive = exp->derive("var3");
+    os << *derive;
+    EXPECT_EQ(os.str(), "0");
+}
+
+// Main
 int main( int argc, char * argv[] ) {
     ::testing::InitGoogleTest( &argc, argv );
     return RUN_ALL_TESTS();

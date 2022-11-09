@@ -11,11 +11,37 @@
 
 #include <gtest/gtest.h>
 
-#include "Expression.hpp"
+#include "Expression,.hpp"
 
- 
-int main( int argc, char * argv[] )
-{
+TEST(TestExpression, TestNumber1) {
+    Nombre nbr{1};
+    std::ostringstream os;
+    os << nbr;
+    EXPECT_EQ(os.str(), "1");
+}
+
+TEST(TestExpression, TestNumber2) {
+    Nombre nbr{2};
+    std::ostringstream os;
+    os << nbr;
+    EXPECT_EQ(os.str(), "2");
+}
+
+TEST(TestExpression, TestVariable1) {
+    Variable var{"Var1"};
+    std::ostringstream os;
+    os << var;
+    EXPECT_EQ(os.str(), "Var1");
+}
+
+TEST(TestExpression, TestVariable2) {
+    Variable var{"Var2"};
+    std::ostringstream os;
+    os << var;
+    EXPECT_EQ(os.str(), "Var2");
+}
+
+int main( int argc, char * argv[] ) {
     ::testing::InitGoogleTest( &argc, argv );
     return RUN_ALL_TESTS();
 }

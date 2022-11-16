@@ -93,6 +93,43 @@ TEST(TestExpression, TestCount2) {
     EXPECT_EQ(os.str(), "2");
 }
 
+// Test class Addition
+TEST(TestExpression, TestAddition1) {
+    std::ostringstream os;
+    Expression* l = new Variable{"4"};
+    Expression* r = new Variable{"6"};
+    Addition* exp = new Addition{l, r};
+    os << *exp;
+    EXPECT_EQ(os.str(), "4 + 6");
+}
+
+TEST(TestExpression, TestAddition2) {
+    std::ostringstream os;
+    Expression* l = new Variable{"4"};
+    Expression* r = new Variable{"r"};
+    Addition* exp = new Addition{l, r};
+    os << *exp;
+    EXPECT_EQ(os.str(), "4 + r");
+}
+
+TEST(TestExpression, TestAdditionDerivation1) {
+    std::ostringstream os;
+    Expression* l = new Variable{"l"};
+    Expression* r = new Nombre{5};
+    Expression* derivation = new Addition{l, r};
+    os << *derivation->derive("l");
+    EXPECT_EQ(os.str(), "1 + 0");
+}
+
+TEST(TestExpression, TestAdditionDerivation2) {
+    std::ostringstream os;
+    Expression* l = new Variable{"l"};
+    Expression* r = new Variable{"r"};
+    Expression* derivation = new Addition{l, r};
+    os << *derivation->derive("l");
+    EXPECT_EQ(os.str(), "1 + 0");
+}
+
 // Main
 int main( int argc, char * argv[] ) {
     ::testing::InitGoogleTest( &argc, argv );

@@ -9,9 +9,11 @@
 #define EXPRESSION_HPP_INCLUDED
 
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <utility>
 #include <memory>
+
 
 // Class Expression
 class Expression {
@@ -42,6 +44,7 @@ inline std::ostream & operator<<( std::ostream & out, const Expression & express
     return out;
 }
 
+
 // Class Nombre
 class Nombre : public Expression {
 public:
@@ -63,6 +66,7 @@ public:
 private:
     const float value_;
 };
+
 
 // Class Variable
 class Variable : public Expression {
@@ -90,11 +94,13 @@ private:
     const std::string name_;
 };
 
+
 // Class Operation
 /* 
 Use of operation_left and operation_right attributes to link the operator and its operands.
 These will take the form of pointers that will allow to point to Expression objects of different forms.
 It must make a copy of the arguments received, in order to be able to use them afterwards.
+Addition and Multiplication use Operation as their parent class.
 */
 class Operation : public Expression {
 public:
@@ -111,10 +117,42 @@ public:
         delete operation_right;
     }
 
+    virtual std::ostream & print(std::ostream &out) const override = 0 ;
+
     // Operands
 protected:
     Expression *operation_left;
     Expression *operation_right;
+
+private:
+};
+
+
+class Addition : public Operation
+{
+public:
+    // Constructor
+    Addition(Expression *left, Expression *right) : Operation(left, right) {}
+
+    // Destructor
+    ~Addition() {}
+
+    using Operation::Operation;
+    // Display
+    std::ostream &print(std::ostream &out) const override {
+        operation_left->print(out);
+        out << " + ";
+        operation_right->print(out);
+        return out;
+    }
+
+    // Derivation
+    Addition *derive(std::string name) const override {
+        Expression *der_left = operation_left->derive(name);
+        Expression *der_right = operation_right->derive(name);
+        Addition *exp = new Addition(der_left, der_right);
+        return exp;
+    }
 
 private:
 };

@@ -90,4 +90,34 @@ private:
     const std::string name_;
 };
 
+// Class Operation
+/* 
+Use of operation_left and operation_right attributes to link the operator and its operands.
+These will take the form of pointers that will allow to point to Expression objects of different forms.
+It must make a copy of the arguments received, in order to be able to use them afterwards.
+*/
+class Operation : public Expression {
+public:
+
+    // Constructor
+    Operation(Expression *left, Expression *right) : Expression() {
+        operation_left = left;
+        operation_right = right;
+    }
+
+    // Destructor
+    ~Operation() {
+        delete operation_left;
+        delete operation_right;
+    }
+
+    // Operands
+protected:
+    Expression *operation_left;
+    Expression *operation_right;
+
+private:
+};
+
+
 #endif

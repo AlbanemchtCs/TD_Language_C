@@ -16,8 +16,9 @@
 // Class Expression
 class Expression {
 public:
-    Expression() {};
-    virtual ~Expression() {}
+    Expression() { count ++; };
+    virtual ~Expression() { count --; };
+    static int count;
 
     /* Corresponding display method: 
             - virtual & constant methods: the virtual method enables to redefine it in the two subclasses (Nombre and Variable) and the constant method enables to not change the object

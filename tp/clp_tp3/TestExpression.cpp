@@ -13,6 +13,8 @@
 
 #include "Expression,.hpp"
 
+int Expression::count = 0;
+
 // Test Number
 TEST(TestExpression, TestNumber1) {
     Nombre nbr{1};
@@ -50,6 +52,8 @@ TEST(TestExpression, TestDerive1) {
     Expression* derive = exp->derive("Var_name1");
     os << *derive;
     EXPECT_EQ(os.str(), "0");
+    delete exp;
+    delete derive;
 }
 
 TEST(TestExpression, TestDerive2) {
@@ -58,6 +62,8 @@ TEST(TestExpression, TestDerive2) {
     Expression* derive = exp->derive("Var_name2");
     os << *derive;
     EXPECT_EQ(os.str(), "1");
+    delete exp;
+    delete derive;
 }
 
 TEST(TestExpression, TestDerive3) {
@@ -66,6 +72,25 @@ TEST(TestExpression, TestDerive3) {
     Expression* derive = exp->derive("var3");
     os << *derive;
     EXPECT_EQ(os.str(), "0");
+    delete exp;
+    delete derive;
+}
+
+// Test count instances
+TEST(TestExpression, TestCount1) {
+    std::ostringstream os;
+    Expression* exp = new Variable{"Var_count1"};
+    delete exp;
+    os << Expression::count;
+    EXPECT_EQ(os.str(), "0");
+}
+
+TEST(TestExpression, TestCount2) {
+    std::ostringstream os;
+    Expression* exp = new Variable{"Var_count2"};
+    Expression* number = new Nombre{21};
+    os << Expression::count;
+    EXPECT_EQ(os.str(), "2");
 }
 
 // Main

@@ -49,31 +49,31 @@ TEST(TestExpression, TestVariable2) {
 TEST(TestExpression, TestDerive1) {
     Expression* exp = new Nombre{1};
     std::ostringstream os;
-    Expression* derive = exp->derive("Var_name1");
-    os << *derive;
+    Expression* derivation = exp->derive("Var_name1");
+    os << *derivation;
     EXPECT_EQ(os.str(), "0");
     delete exp;
-    delete derive;
+    delete derivation;
 }
 
 TEST(TestExpression, TestDerive2) {
     Expression* exp = new Variable{"Var_name2"};
     std::ostringstream os;
-    Expression* derive = exp->derive("Var_name2");
-    os << *derive;
+    Expression* derivation = exp->derive("Var_name2");
+    os << *derivation;
     EXPECT_EQ(os.str(), "1");
     delete exp;
-    delete derive;
+    delete derivation;
 }
 
 TEST(TestExpression, TestDerive3) {
     Expression* exp = new Variable{"Var_name3"};
     std::ostringstream os;
-    Expression* derive = exp->derive("var3");
-    os << *derive;
+    Expression* derivation = exp->derive("var3");
+    os << *derivation;
     EXPECT_EQ(os.str(), "0");
     delete exp;
-    delete derive;
+    delete derivation;
 }
 
 // Test count instances
@@ -98,8 +98,8 @@ TEST(TestExpression, TestAddition1) {
     std::ostringstream os;
     Expression* l = new Variable{"4"};
     Expression* r = new Variable{"6"};
-    Addition* exp = new Addition{l, r};
-    os << *exp;
+    Addition* add = new Addition{l, r};
+    os << *add;
     EXPECT_EQ(os.str(), "4 + 6");
 }
 
@@ -107,8 +107,8 @@ TEST(TestExpression, TestAddition2) {
     std::ostringstream os;
     Expression* l = new Variable{"4"};
     Expression* r = new Variable{"r"};
-    Addition* exp = new Addition{l, r};
-    os << *exp;
+    Addition* add = new Addition{l, r};
+    os << *add;
     EXPECT_EQ(os.str(), "4 + r");
 }
 
@@ -158,6 +158,54 @@ TEST(TestExpression, TestCloningAddition) {
     delete add;
     os << *clone;
     EXPECT_EQ(os.str(), "a + 5");
+}
+
+TEST( TestExpressionClonage, TestClonageMultiplication ) {
+    std::ostringstream os;
+    Variable *var = new Variable("a");
+    Nombre *nbr = new Nombre(5);
+    Multiplication *mult = new Multiplication{ var, nbr };
+    Multiplication *clone = mult->clone();
+    delete mult;
+    os << *clone;
+    EXPECT_EQ(os.str(), "a * 5");
+}
+
+// Class Multiplication
+TEST(TestExpression, TestMultiplication1) {
+    std::ostringstream os;
+    Expression* l = new Variable{"a"};
+    Expression* r = new Nombre{5};
+    Multiplication* mult = new Multiplication{l, r};
+    os << *mult;
+    EXPECT_EQ(os.str(), "a * 5");
+}
+
+TEST(TestExpression, TestMultiplication2) {
+    std::ostringstream os;
+    Expression* l = new Variable{"a"};
+    Expression* r = new Variable{"b"};
+    Multiplication* mult = new Multiplication{l, r};
+    os << *mult;
+    EXPECT_EQ(os.str(), "a * b");
+}
+
+TEST(TestExpression, TestMultiplicationDerivation1) {
+    std::ostringstream os;
+    Expression* l = new Variable{"a"};
+    Expression* r = new Nombre{5};
+    Expression* derivation = new Multiplication{l, r};
+    os << *derivation->derive("a");
+    EXPECT_EQ(os.str(), "1 * 5 + a * 0");
+}
+
+TEST(TestExpression, TestMultiplicationDerivation2) {
+    std::ostringstream os;
+    Expression* l = new Variable{"a"};
+    Expression* r = new Variable{"b"};
+    Expression* derivation = new Multiplication{l, r};
+    os << *derivation->derive("a");
+    EXPECT_EQ(os.str(), "1 * b + a * 0");
 }
 
 // Main

@@ -166,4 +166,37 @@ private:
 };
 
 
+// Class Multiplication
+class Multiplication : public Operation {
+public:
+
+    // Constructor
+    Multiplication(Expression *left, Expression *right) : Operation(left, right) {}
+
+    // Destructor
+    ~Multiplication() {}
+
+    // Display
+    std::ostream &print(std::ostream &out) const override {
+        operation_left->print(out);
+        out << " * ";
+        operation_right->print(out);
+        return out;
+    }
+    
+    // Derivation
+    Expression *derive(const std::string var_name) const override {
+        Expression *der_left = operation_left->derive(var_name);
+        Expression *der_right = operation_right->derive(var_name);
+        Operation *exp = new Addition(new Multiplication(der_left, operation_right), new Multiplication(operation_left, der_right));
+        return (exp);
+    }
+
+    // Cloning
+    Multiplication *clone() const override {return new Multiplication(operation_left->clone(), operation_right->clone());}
+
+private:
+};
+
+
 #endif

@@ -130,6 +130,36 @@ TEST(TestExpression, TestAdditionDerivation2) {
     EXPECT_EQ(os.str(), "1 + 0");
 }
 
+// Test cloning
+TEST(TestExpression, TestCloningNombre) {
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(5);
+    Nombre *clone = nbr->clone();
+    delete nbr;
+    os << *clone;
+    EXPECT_EQ(os.str(), "5");
+}
+
+TEST(TestExpression, TestCloningVariable) {
+    std::ostringstream os;
+    Variable *var = new Variable("a");
+    Variable *clone = var->clone();
+    delete var;
+    os << *clone;
+    EXPECT_EQ(os.str(), "a");
+}
+
+TEST(TestExpression, TestCloningAddition) {
+    std::ostringstream os;
+    Variable *var = new Variable("a");
+    Nombre *nbr = new Nombre(5);
+    Addition *add = new Addition{ var, nbr };
+    Addition *clone = add->clone();
+    delete add;
+    os << *clone;
+    EXPECT_EQ(os.str(), "a + 5");
+}
+
 // Main
 int main( int argc, char * argv[] ) {
     ::testing::InitGoogleTest( &argc, argv );

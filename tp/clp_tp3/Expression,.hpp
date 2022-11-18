@@ -18,8 +18,8 @@
 // Class Expression
 class Expression {
 public:
-    Expression() { count ++; };
-    virtual ~Expression() { count --; };
+    Expression() {count ++;};
+    virtual ~Expression() {count --;};
     static int count;
 
     /* Corresponding display method: 
@@ -36,11 +36,14 @@ public:
     */
     virtual Expression *derive(std::string var_name) const = 0;
 
+    // Cloning
+    virtual Expression *clone() const = 0;
+
 private:
 };
 
-inline std::ostream & operator<<( std::ostream & out, const Expression & expression ) {
-    expression.print( out );
+inline std::ostream & operator<< (std::ostream & out, const Expression & expression) {
+    expression.print(out);
     return out;
 }
 
@@ -61,7 +64,10 @@ public:
     */
     Expression *derive(std::string var_name) const override {
         return (new Nombre(0));
-    }
+    };
+
+    // Cloning
+    Nombre *clone() const override {return new Nombre{value_};};
 
 private:
     const float value_;
@@ -88,7 +94,10 @@ public:
         } else {
             return (new Nombre(0));
         }
-    }
+    };
+    
+    // Cloning
+    Variable *clone() const override {return new Variable{name_};};
 
 private:
     const std::string name_;
@@ -116,9 +125,7 @@ public:
         delete operation_left;
         delete operation_right;
     }
-
-    virtual std::ostream & print(std::ostream &out) const override = 0 ;
-
+    
     // Operands
 protected:
     Expression *operation_left;
@@ -128,8 +135,7 @@ private:
 };
 
 
-class Addition : public Operation
-{
+class Addition : public Operation {
 public:
     // Constructor
     Addition(Expression *left, Expression *right) : Operation(left, right) {}
@@ -137,7 +143,6 @@ public:
     // Destructor
     ~Addition() {}
 
-    using Operation::Operation;
     // Display
     std::ostream &print(std::ostream &out) const override {
         operation_left->print(out);
@@ -145,14 +150,17 @@ public:
         operation_right->print(out);
         return out;
     }
-
+    
     // Derivation
-    Addition *derive(std::string name) const override {
-        Expression *der_left = operation_left->derive(name);
-        Expression *der_right = operation_right->derive(name);
+    Addition *derive(std::string var_name) const override {
+        Expression *der_left = operation_left->derive(var_name);
+        Expression *der_right = operation_right->derive(var_name);
         Addition *exp = new Addition(der_left, der_right);
         return exp;
     }
+
+    // Cloning
+    Addition *clone() const override {return new Addition(operation_left->clone(), operation_right->clone());}
 
 private:
 };

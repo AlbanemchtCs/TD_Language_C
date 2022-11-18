@@ -208,6 +208,110 @@ TEST(TestExpression, TestMultiplicationDerivation2) {
     EXPECT_EQ(os.str(), "1 * b + a * 0");
 }
 
+// Test simplification
+TEST(TestExpression, TestSimplificationAddition1) {
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(0);
+    Variable *a = new Variable("a");
+    Addition *add = new Addition{ nbr, a };
+    Expression *add_simplified = add->simplification();
+    os << *add_simplified;
+    EXPECT_EQ( os.str(), "a" );
+}
+
+TEST(TestExpression, TestSimplificationAddition2) {
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(5);
+    Variable *a = new Variable("a");
+    Addition *add = new Addition{ nbr, a };
+    Expression *add_simplified = add->simplification();
+    os << *add_simplified;
+    EXPECT_EQ( os.str(), "5 + a" );
+}
+
+TEST( TestExpression, TestSimplificationAddition3){
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(1);
+    Nombre *nbr_bis = new Nombre(0);
+    Addition *add = new Addition{ nbr, nbr_bis };
+    Expression *add_simplified = add->simplification();
+    os << *add_simplified;
+    EXPECT_EQ( os.str(), "1" );
+}
+
+TEST( TestExpressionSimplification, TestSimplificationAddition4) {
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(5);
+    Nombre *nbr_bis = new Nombre(2);
+    Addition *add = new Addition{ nbr, nbr_bis };
+    Expression *add_simplified = add->simplification();
+    os << *add_simplified;
+    EXPECT_EQ( os.str(), "7" );
+}
+
+TEST(TestExpression, TestSimplificationMultiplication1) {
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(0);
+    Variable *var = new Variable("a");
+    Multiplication *mult = new Multiplication{ nbr, var };
+    Expression *mult_simplified = mult->simplification();
+    os << *mult_simplified;
+    EXPECT_EQ( os.str(), "0" );
+}
+
+TEST(TestExpression, TestSimplificationMultiplication2) {
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(5);
+    Nombre *nbr_bis = new Nombre(0);
+    Multiplication *mult = new Multiplication{ nbr, nbr_bis };
+    Expression *mult_simplified = mult->simplification();
+    os << *mult_simplified;
+    EXPECT_EQ( os.str(), "0" );
+}
+
+TEST(TestExpression, TestSimplificationMultiplication3) {
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(1);
+    Variable *var = new Variable("a");
+    Multiplication *mult = new Multiplication{ nbr, var };
+    Expression *mult_simplified = mult->simplification();
+    os << *mult_simplified;
+    EXPECT_EQ( os.str(), "a" );
+}
+
+TEST(TestExpression, TestSimplificationMultiplication4) {
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(5);
+    Nombre *nbr_bis = new Nombre(1);
+    Multiplication *mult = new Multiplication{ nbr, nbr_bis };
+    Expression *mult_simplified = mult->simplification();
+    os << *mult_simplified;
+    EXPECT_EQ( os.str(), "5" );
+}
+
+TEST(TestExpression, TestSimplificationMultiplication5) {
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(5);
+    Nombre *nbr_bis = new Nombre(2);
+    Multiplication *mult = new Multiplication{ nbr, nbr_bis };
+    Expression *mult_simplified = mult->simplification();
+    os << *mult_simplified;
+    EXPECT_EQ( os.str(), "10" );
+}
+
+TEST( TestExpression, TestSimplificationAdditionMultiplication) {
+    // (0 + a) * 1 = a
+    std::ostringstream os;
+    Nombre *nbr = new Nombre(0);
+    Expression* var = new Variable{"a"};
+    Expression* add = new Addition{nbr, var};
+    Nombre *nbr_bis = new Nombre(1);
+    Expression* mult = new Multiplication{add, nbr_bis};
+    Expression* simplification = mult->simplification();
+    os << *simplification;
+    EXPECT_EQ(os.str(), "a");
+}
+
 // Main
 int main( int argc, char * argv[] ) {
     ::testing::InitGoogleTest( &argc, argv );

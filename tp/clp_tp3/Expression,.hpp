@@ -8,6 +8,7 @@
 #ifndef EXPRESSION_HPP_INCLUDED
 #define EXPRESSION_HPP_INCLUDED
 
+#include <cstddef>
 #include <iostream>
 #include <ostream>
 #include <string>
@@ -39,6 +40,9 @@ public:
     // Cloning
     virtual Expression *clone() const = 0;
 
+    // Simplification
+    virtual Expression *simplification() const = 0;
+
 private:
 };
 
@@ -68,6 +72,10 @@ public:
 
     // Cloning
     Nombre *clone() const override {return new Nombre{value_};};
+
+    // Simplification
+    Nombre *simplification() const override {return this->clone();};
+    float value() const {return value_;}
 
 private:
     const float value_;
@@ -99,8 +107,11 @@ public:
     // Cloning
     Variable *clone() const override {return new Variable{name_};};
 
+    // Simplification
+    Variable *simplification() const override {return this->clone();};
+
 private:
-    const std::string name_;
+    std::string name_;
 };
 
 
@@ -125,7 +136,10 @@ public:
         delete operation_left;
         delete operation_right;
     }
-    
+
+    // Simplification
+    virtual Expression *simplification() const override = 0;
+
     // Operands
 protected:
     Expression *operation_left;
@@ -143,6 +157,32 @@ public:
     // Destructor
     ~Addition() {}
 
+    // Simplification
+    Expression *simplification() const override{
+        Expression *operation_left_simplified = operation_left->simplification();
+        Expression *operation_right_simplified = operation_right->simplification();
+
+        Nombre *left_simple = dynamic_cast<Nombre *>(operation_left_simplified);
+        Nombre *right_simple = dynamic_cast<Nombre *>(operation_right_simplified);
+
+        // Return addition of the operands if they are both numbers 
+        if (left_simple != 0 && right_simple != 0) {
+            Nombre *nbr = new Nombre(left_simple->value() + right_simple->value());
+            delete operation_left_simplified;
+            delete operation_right_simplified;
+            return nbr;
+        // If one of the operand is O
+        } else if (left_simple != 0 && left_simple->value() == 0) {
+            delete operation_left_simplified;
+            return operation_right_simplified;
+        } else if (right_simple != 0 && right_simple->value() == 0) {
+            delete operation_right_simplified;
+            return operation_left_simplified;
+        }
+        // Return new addition with the simplified operands
+        return new Addition(operation_left_simplified, operation_right_simplified);
+    }
+    
     // Display
     std::ostream &print(std::ostream &out) const override {
         operation_left->print(out);
@@ -175,6 +215,50 @@ public:
 
     // Destructor
     ~Multiplication() {}
+
+    // Simplification
+    Expression *simplification() const override{
+        Expression *operation_left_simplified = operation_left->simplification();
+        Expression *operation_right_simplified = operation_right->simplification();
+
+        Nombre *left_simple = dynamic_cast<Nombre *>(operation_left_simplified);
+        Nombre *right_simple = dynamic_cast<Nombre *>(operation_right_simplified);        
+
+        // Return multiplication of the operands if they are both numbers 
+        if (left_simple != 0 && right_simple != 0) {
+            Nombre *nbr = new Nombre(left_simple->value() *right_simple->value());
+            delete operation_left_simplified;
+            delete operation_right_simplified;
+            return nbr;
+        }
+
+        if (left_simple != 0) {
+            // If the right operand is 1
+            if (left_simple->value() == 1) {
+                delete operation_left_simplified;
+                return operation_right_simplified;
+            // If the operand is 0
+            } else if (left_simple->value() == 0) {
+                delete operation_left_simplified;
+                delete operation_right_simplified;
+                return new Nombre(0);
+            }
+        }
+        if (right_simple != 0) {
+            // If the right operand is 1
+            if (right_simple->value() == 1) {
+                delete operation_right_simplified;
+                return operation_left_simplified;
+            // If the operand is 0
+            } else if (right_simple->value() == 0) {
+                delete operation_left_simplified;
+                delete operation_right_simplified;
+                return new Nombre(0);
+            }
+        }
+        // Return new multiplication with the simplified operands
+        return new Multiplication(operation_left_simplified, operation_right_simplified);
+    }
 
     // Display
     std::ostream &print(std::ostream &out) const override {

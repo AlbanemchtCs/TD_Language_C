@@ -188,8 +188,21 @@ public:
         return out;
     }
 
-    // Derivation
-    std::shared_ptr<Expression> derive(std::string var_name) const override { return std::shared_ptr<Addition>(new Addition(operation_left->derive(var_name), operation_right->derive(var_name))); }
+    // Derivation with elimination of the creations of the numbers 0 and 1 
+    std::shared_ptr<Expression> derive(std::string var_name) const override { 
+        std::shared_ptr<Expression> der_left = operation_left->derive(var_name);
+        std::shared_ptr<Expression> der_right= operation_right->derive(var_name);
+
+        std::shared_ptr<Nombre> der_left_nbr = std::dynamic_pointer_cast<Nombre>(der_left);
+        std::shared_ptr<Nombre> der_right_nbr = std::dynamic_pointer_cast<Nombre>(der_right);
+
+        if (der_left_nbr->value() == 0) {
+            return der_right;
+        } else if (der_right_nbr->value() == 0) {
+            return der_left;
+        }
+        return std::shared_ptr<Addition>(new Addition(der_left, der_right));
+    }
 
     /*
     // Cloning
@@ -255,16 +268,37 @@ public:
         return out;
     }
 
-    // Derivation
+    // Derivation with elimination of the creations of the numbers 0 and 1 
     std::shared_ptr<Expression> derive(std::string var_name) const override {
         std::shared_ptr<Expression> der_left = operation_left->derive(var_name);
         std::shared_ptr<Expression> der_right = operation_right->derive(var_name);
-        return std::shared_ptr<Addition>(
-            new Addition(
-                std::shared_ptr<Multiplication>(new Multiplication(der_left, operation_right)), 
-                std::shared_ptr<Multiplication>(new Multiplication(operation_left, der_right))
-            )
-        );
+
+        std::shared_ptr<Nombre> der_left_nbr = std::dynamic_pointer_cast<Nombre>(der_left);
+        std::shared_ptr<Nombre> der_right_nbr = std::dynamic_pointer_cast<Nombre>(der_right);
+
+        std::shared_ptr<Expression> exp_left;
+        std::shared_ptr<Expression> exp_right;
+
+        if (der_left_nbr->value() == 1) {
+            exp_left = operation_right;
+        } else {
+            exp_left = std::shared_ptr<Multiplication>(new Multiplication(der_left, operation_right));
+        }
+        if (der_right_nbr->value() == 1) {
+            exp_right = operation_left;
+        } else {
+            exp_right = std::shared_ptr<Multiplication>(new Multiplication(operation_left, der_right));
+        }
+        if (der_left_nbr->value() == 0 && der_right_nbr->value() == 0) {
+            return std::shared_ptr<Nombre>(new Nombre(0));
+        }
+        if (der_left_nbr->value() == 0) {
+            return exp_right;
+        }
+        if (der_right_nbr->value() == 0) {
+            return exp_left;
+        }
+        return std::shared_ptr<Addition>(new Addition(exp_left, exp_right));
     }
 
     /*

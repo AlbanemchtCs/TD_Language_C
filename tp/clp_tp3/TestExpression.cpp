@@ -112,7 +112,8 @@ TEST(TestExpression, TestAdditionDerivation1) {
     std::shared_ptr<Expression> r(new Nombre(5));
     std::shared_ptr<Expression> derivation = std::shared_ptr<Addition>(new Addition( l, r ));
     os << *derivation->derive("l");
-    EXPECT_EQ(os.str(), "1 + 0");
+    // we delete the 0
+    EXPECT_EQ(os.str(), "1");
 }
 
 TEST(TestExpression, TestAdditionDerivation2) {
@@ -121,7 +122,8 @@ TEST(TestExpression, TestAdditionDerivation2) {
     std::shared_ptr<Expression> r(new Variable("r"));
     std::shared_ptr<Expression> derivation = std::shared_ptr<Addition>(new Addition( l, r ));
     os << *derivation->derive("l");
-    EXPECT_EQ(os.str(), "1 + 0");
+    // we delete the 0
+    EXPECT_EQ(os.str(), "1");
 }
 
 /*
@@ -192,7 +194,8 @@ TEST(TestExpression, TestMultiplicationDerivation1) {
     std::shared_ptr<Expression> r(new Nombre(5));
     std::shared_ptr<Expression> derivation = std::shared_ptr<Multiplication>(new Multiplication( l, r ));
     os << *derivation->derive("a");
-    EXPECT_EQ(os.str(), "1 * 5 + a * 0");
+    // we delete the 1 and 0
+    EXPECT_EQ(os.str(), "5");
 }
 
 TEST(TestExpression, TestMultiplicationDerivation2) {
@@ -201,7 +204,8 @@ TEST(TestExpression, TestMultiplicationDerivation2) {
     std::shared_ptr<Expression> r(new Variable("b"));
     std::shared_ptr<Expression> derivation = std::shared_ptr<Multiplication>(new Multiplication( l, r ));
     os << *derivation->derive("a");
-    EXPECT_EQ(os.str(), "1 * b + a * 0");
+    // we delete the 1 and 0
+    EXPECT_EQ(os.str(), "b");
 }
 
 // Test simplification

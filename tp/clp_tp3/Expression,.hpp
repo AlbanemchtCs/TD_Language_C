@@ -16,7 +16,11 @@
 #include <memory>
 
 // Class Expression
-class Expression {
+/* 
+It is necessary to keep creating instances in Number::simplify() and Variable::simplify() because an expression cannot be quoted automatically. 
+It is necessary to use enable_shared_from_this. which allows to generate instances 
+*/
+class Expression : public std::enable_shared_from_this<Expression> {
 public:
     Expression() { count++; };
     virtual ~Expression() { count--; };
@@ -42,7 +46,7 @@ public:
     */
 
     // Simplification
-    virtual std::shared_ptr<Expression> simplification() const = 0;
+    virtual std::shared_ptr<Expression> simplification() = 0;
 
 private:
 };
@@ -74,8 +78,8 @@ public:
     */
 
     // Simplification
-    std::shared_ptr<Expression> simplification() const override {
-        return std::shared_ptr<Nombre>(new Nombre(value_));
+    std::shared_ptr<Expression> simplification() {
+        return shared_from_this();
     };
     float value() const {return value_;}
 
@@ -113,7 +117,9 @@ public:
     */
 
     // Simplification
-    std::shared_ptr<Expression> simplification() const override { return std::shared_ptr<Variable>(new Variable(name_)); };
+    std::shared_ptr<Expression> simplification() {
+        return shared_from_this();
+    };
 
 private:
     std::string name_;
@@ -138,7 +144,7 @@ public:
     ~Operation() {}
 
     // Simplification
-    virtual std::shared_ptr<Expression> simplification() const override = 0;
+    virtual std::shared_ptr<Expression> simplification() = 0;
 
     // Operands
 protected:
@@ -157,7 +163,7 @@ public:
     ~Addition() {}
 
     // Simplification
-    std::shared_ptr<Expression> simplification() const override {
+    std::shared_ptr<Expression> simplification() {
 
         std::shared_ptr<Expression> operation_left_simplified = operation_left->simplification();
         std::shared_ptr<Expression> operation_right_simplified = operation_right->simplification();
@@ -222,7 +228,7 @@ public:
     ~Multiplication() {}
 
     // Simplification
-    std::shared_ptr<Expression> simplification() const override {
+    std::shared_ptr<Expression> simplification() {
 
         std::shared_ptr<Expression> operation_left_simplified = operation_left->simplification();
         std::shared_ptr<Expression> operation_right_simplified = operation_right->simplification();
